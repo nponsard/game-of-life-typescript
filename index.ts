@@ -2,12 +2,12 @@
 
 let canvas = <HTMLCanvasElement>document.getElementById('canvas')
 let ctx = <CanvasRenderingContext2D>canvas.getContext("2d")
-let WIDTH = 45
-let HEIGHT = 24
+let WIDTH = 92
+let HEIGHT = 49
 
-let p = 0.91
+let p = 0.8
 
-let scale = 40
+let scale = 20
 
 let play = false
 
@@ -57,7 +57,7 @@ class grid {
                 ctx.fillStyle = "white"
                 if (this.grid[x][y]) ctx.fillStyle = "black";
                 ctx.fill();
-                ctx.strokeStyle = "black"
+                ctx.strokeStyle = "grey"
                 ctx.stroke()
                 ctx.closePath();
             }
@@ -204,10 +204,10 @@ function draw() {
     f += 1
     cells.show(ctx)
     requestAnimationFrame(draw)
-    if (f >= 10) {
-        f = 0
+    // if (f >= 10) {
+    //     f = 0
         if(play)cells.update()
-    }
+    // }
 }
 
 draw()
