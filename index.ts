@@ -2,12 +2,14 @@
 
 let canvas = <HTMLCanvasElement>document.getElementById('canvas')
 let ctx = <CanvasRenderingContext2D>canvas.getContext("2d")
-let WIDTH = 95
-let HEIGHT = 49
+let WIDTH = 45
+let HEIGHT = 24
 
+let p = 0.91
 
-let scale = 20
+let scale = 40
 
+let play = false
 
 canvas.width = WIDTH * scale
 canvas.height = HEIGHT * scale
@@ -23,18 +25,27 @@ class grid {
         let i: boolean = true
         this.w = w
         this.h = h
-
         for (let x = 0; x <= w; x++) {
             for (let y = 0; y < h; y++) {
-                i = false
-                if (Math.random() >= 0.93) i = true
-                console.log(i);
+                line.push(false)
 
-                line.push(i)
             }
             this.grid.push(line)
             line = []
         }
+
+
+
+        // for (let x = 0; x <= w; x++) {
+        //     for (let y = 0; y < h; y++) {
+        //         i = false
+        //         if (Math.random() >= p) i = true
+
+        //         line.push(i)
+        //     }
+        //     this.grid.push(line)
+        //     line = []
+        // }
     }
 
     show(ctx: CanvasRenderingContext2D) {
@@ -55,21 +66,34 @@ class grid {
 
 
     update() {
-        let temp = this.grid
+        let temp = []
+        let t= false
+        let line :Array<boolean> = []
         for (let x = 0; x <= this.w; x++) {
 
             for (let y = 0; y <= this.h; y++) {
+                
                 let n = this.neighbours(x, y)
+
                 if (this.grid[x][y]) {
-                    temp[x][y] = false
-                    if (n === 2) temp[x][y] = true
-                    if (n === 3) temp[x][y] = true
+                
+                    t= true
+                
+                    if (n === 2) t = true
+                    if (n === 3) t = true
+                    if (n > 3) t = false
+                    if (n<2) t =false
+                
                 } else {
-                    if (n === 3) temp[x][y] = true
+                    t= false
+                    if (n === 3) t = true
                 }
+                line.push(t)
 
 
             }
+            temp.push(line)
+            line = []
         }
         this.grid = temp
     }
@@ -78,13 +102,17 @@ class grid {
         let sum = 0
         if (x !== 0) {
             if (this.grid[x - 1][y]) sum += 1
-            if (this.grid[x - 1][y + 1]) sum += 1
+            if (y !== this.h){
+                if (this.grid[x - 1][y + 1]) sum += 1
+            }
         }
         if (y !== 0) {
             if (this.grid[x][y - 1]) sum += 1
             if (x !== 0) {
-                if (this.grid[x + 1][y - 1]) sum += 1
                 if (this.grid[x - 1][y - 1]) sum += 1
+            }
+            if (x !== this.w) {
+                if (this.grid[x + 1][y - 1]) sum += 1
             }
         }
         if (x !== this.w) {
@@ -104,13 +132,83 @@ class grid {
 
 let cells = new grid(WIDTH, HEIGHT)
 
+//keys listeners
+canvas.addEventListener("click", function (e) {
+    let x = Math.floor(e.layerX / scale)
+    let y = Math.floor(e.layerY / scale)
 
+    if (cells.grid[x][y]) {
+
+        cells.grid[x][y] = false
+    } else {
+        cells.grid[x][y] = true
+    }
+
+})
+addEventListener("keypress",function(e){
+
+    
+    if (e.key === " " || e.key === "p"){
+        if(play) {
+            play = false
+        }else{
+            play = true
+        }
+    }
+    if (e.key === "r"){
+        cells.grid = []
+
+        let i = false
+        let line = []
+        let h = cells.h
+        let w = cells.w
+
+        for (let x = 0; x <= w; x++) {
+            for (let y = 0; y < h; y++) {
+                i = false
+                if (Math.random() >= p) i = true
+
+                line.push(i)
+            }
+            cells.grid.push(line)
+            line = []
+        }
+
+    }
+    if (e.key === "c") {
+
+        cells.grid = [[]]
+        let line: Array<boolean> = []
+        let i: boolean = true
+        let w = cells.w
+        let h = cells.h
+        for (let x = 0; x <= w; x++) {
+            for (let y = 0; y < h; y++) {
+                line.push(false)
+
+            }
+            cells.grid.push(line)
+            line = []
+        }
+
+
+    }
+
+
+})
+
+
+
+let f = 0
 function draw() {
-    cells.update()
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    f += 1
     cells.show(ctx)
-
+    requestAnimationFrame(draw)
+    if (f >= 10) {
+        f = 0
+        if(play)cells.update()
+    }
 }
 
+draw()
 
-setInterval(draw, 100);
