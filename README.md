@@ -1,7 +1,3 @@
-# game of life typescript
-
-The poject need to be compiled from typescript ```$ tsc```
-
 # Controls
 **P/space** to pause execution\
 **Click** a square to activate/desactivate it\
