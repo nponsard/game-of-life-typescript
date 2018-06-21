@@ -49,7 +49,7 @@ class grid {
     }
 
     show(ctx: CanvasRenderingContext2D) {
-
+        
         for (let x = 0; x <= this.w; x++) {
             for (let y = 0; y < this.h; y++) {
                 ctx.beginPath();
@@ -143,6 +143,7 @@ canvas.addEventListener("click", function (e) {
     } else {
         cells.grid[x][y] = true
     }
+    cells.show(ctx)
 
 })
 addEventListener("keypress",function(e){
