@@ -1,6 +1,6 @@
 # game of life typescript
 
-The poject need to be compiled from typescript ```$ tsc```
+Launch it by opening ```index.html``` in a browser
 
 # Controls
 **P/space** to pause execution\
