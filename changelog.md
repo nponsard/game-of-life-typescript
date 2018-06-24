@@ -1,4 +1,4 @@
-# Upcoming release
+# 1.1.0
 
 ## controls
 - added option key to customize parameters like scale, dimensions, probability of appearing alive cell when randomizing the grid, frames skipped betwen 2 updates.
