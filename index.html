@@ -8,6 +8,8 @@
         * {
             margin: 0;
             padding: 0;
+            font-family: verdana;
+
         }
 
         html,
@@ -23,19 +25,42 @@
             /* margin-left: auto; */
             /* margin-right: auto; */
             /* height: 100%; */
-        }
-
-        canvas {
             background: white;
+
         }
     </style>
 </head>
 
 <body>
-    <canvas id ="canvas" width="800" height="600"></canvas>
+    <p>P/space : play/pause | Click : toggle cell | R : randomize grid | C : clear grid | O : options</p>
+    <canvas id="canvas" width="800" height="600"></canvas>
 
-    
+    <!-- options -->
+    <div id="options" style="display: none;">
+        <h1>Options</h1>
+
+        <form onsubmit="return validateOptions();">
+            <label for="ScaleValue">Scale =</label>
+            <input type="number" name="scale" id="ScaleValue" value="20">
+
+            <label for="WidthValue">Width =</label>
+            <input type="number" name="width" id="WidthValue" value="100">
+
+            <label for="HeightValue">Height =</label>
+            <input type="number" name="height" id="HeightValue" value="100">
+
+            <label for="ProbabilityValue">Probability =</label>
+            <input type="number" name="probability" id="ProbabilityValue" value="0.01" step="0.01">
+
+            <button type="button" onclick="validateOptions();">submit</button>
+        </form>
+
+
+    </div>
+
+
 </body>
 
 <script src="./bin/index.js"></script>
+
 </html>

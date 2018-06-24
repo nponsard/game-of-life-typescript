@@ -8,8 +8,14 @@ let HEIGHT = 49
 let p = 0.8
 
 let scale = 20
-
+let steps = 1
 let play = false
+let show = true
+
+let ScaleValue = <HTMLInputElement>document.getElementById("ScaleValue")
+let WidthValue = <HTMLInputElement>document.getElementById("WidthValue")
+let HeightValue = <HTMLInputElement>document.getElementById("HeightValue")
+let ProbabilityValue = <HTMLInputElement>document.getElementById("ProbabilityValue")
 
 canvas.width = WIDTH * scale
 canvas.height = HEIGHT * scale
@@ -49,7 +55,7 @@ class grid {
     }
 
     show(ctx: CanvasRenderingContext2D) {
-        
+
         for (let x = 0; x <= this.w; x++) {
             for (let y = 0; y < this.h; y++) {
                 ctx.beginPath();
@@ -67,25 +73,25 @@ class grid {
 
     update() {
         let temp = []
-        let t= false
-        let line :Array<boolean> = []
+        let t = false
+        let line: Array<boolean> = []
         for (let x = 0; x <= this.w; x++) {
 
             for (let y = 0; y <= this.h; y++) {
-                
+
                 let n = this.neighbours(x, y)
 
                 if (this.grid[x][y]) {
-                
-                    t= true
-                
+
+                    t = true
+
                     if (n === 2) t = true
                     if (n === 3) t = true
                     if (n > 3) t = false
-                    if (n<2) t =false
-                
+                    if (n < 2) t = false
+
                 } else {
-                    t= false
+                    t = false
                     if (n === 3) t = true
                 }
                 line.push(t)
@@ -102,7 +108,7 @@ class grid {
         let sum = 0
         if (x !== 0) {
             if (this.grid[x - 1][y]) sum += 1
-            if (y !== this.h){
+            if (y !== this.h) {
                 if (this.grid[x - 1][y + 1]) sum += 1
             }
         }
@@ -135,7 +141,7 @@ let cells = new grid(WIDTH, HEIGHT)
 //keys listeners
 canvas.addEventListener("click", function (e) {
     let x = Math.floor(e.layerX / scale)
-    let y = Math.floor(e.layerY / scale)
+    let y = Math.floor(e.layerY / scale) - 1
 
     if (cells.grid[x][y]) {
 
@@ -146,17 +152,17 @@ canvas.addEventListener("click", function (e) {
     cells.show(ctx)
 
 })
-addEventListener("keypress",function(e){
+addEventListener("keypress", function (e) {
 
-    
-    if (e.key === " " || e.key === "p"){
-        if(play) {
+
+    if (e.key === " " || e.key === "p") {
+        if (play) {
             play = false
-        }else{
+        } else {
             play = true
         }
     }
-    if (e.key === "r"){
+    if (e.key === "r") {
         cells.grid = []
 
         let i = false
@@ -194,21 +200,72 @@ addEventListener("keypress",function(e){
 
 
     }
+    if (e.key === "o") {
+        canvas.style.display = "none"
+        let optionsDiv = <HTMLElement>document.getElementById("options")
+        optionsDiv.style.display = "block"
+        play = false
+
+        ScaleValue.value = scale.toString()
+
+        WidthValue.value = WIDTH.toString()
+
+        HeightValue.value = HEIGHT.toString()
+
+        ProbabilityValue.value = p.toString()
+
+
+    }
 
 
 })
 
+function validateOptions() {
+    canvas.style.display = "block"
+    let optionsDiv = <HTMLElement>document.getElementById("options")
+    optionsDiv.style.display = "none"
 
+    scale = parseInt(ScaleValue.value)
+
+    WIDTH = parseInt(WidthValue.value)
+
+    HEIGHT = parseInt(HeightValue.value)
+
+    p = parseFloat(ProbabilityValue.value)
+    canvas.width = WIDTH * scale
+    canvas.height = HEIGHT * scale
+
+    cells.w = WIDTH
+    cells.h = HEIGHT
+
+    // clear the grid to the right format
+    cells.grid = [[]]
+    let line: Array<boolean> = []
+    let i: boolean = true
+    let w = cells.w
+    let h = cells.h
+    for (let x = 0; x <= w; x++) {
+        for (let y = 0; y < h; y++) {
+            line.push(false)
+
+        }
+        cells.grid.push(line)
+        line = []
+    }
+
+
+
+}
 
 let f = 0
 function draw() {
-    f += 1
-    cells.show(ctx)
+    if (show) cells.show(ctx)
     requestAnimationFrame(draw)
-    // if (f >= 10) {
-    //     f = 0
-        if(play)cells.update()
-    // }
+    f += 1
+    if (f >= 10) {
+        f = 0
+        if (play) cells.update()
+    }
 }
 
 draw()
