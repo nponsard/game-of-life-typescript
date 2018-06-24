@@ -28,6 +28,16 @@
             background: white;
 
         }
+        #submitB{
+            margin-left : 95px;
+            width: 100px;
+        }
+
+        label {
+            display: inline-block;
+            width: 90px;
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -37,27 +47,31 @@
 
     <!-- options -->
     <div id="options" style="display: none;">
-        <h1>Options</h1>
+        <div style="background: whitesmoke; border: 2px solid black;width: 300px;margin: 5px;">
+            <h3>Options</h3>
 
-        <form onsubmit="return validateOptions();">
-            <label for="ScaleValue">Scale =</label>
-            <input type="number" name="scale" id="ScaleValue" value="20">
+            <form onsubmit="return validateOptions();">
+                <label for="ScaleValue">Scale</label>
+                <input type="number" name="scale" id="ScaleValue" value="20">
+                <br>
+                <label for="WidthValue">Width</label>
+                <input type="number" name="width" id="WidthValue" value="100">
+                <br>
+                <label for="HeightValue">Height</label>
+                <input type="number" name="height" id="HeightValue" value="100">
+                <br>
+                <label for="ProbabilityValue">Probability</label>
+                <input type="number" name="probability" id="ProbabilityValue" value="0.01" step="0.01">
+                <br>
+                <label for="StepsValue">Frameskip</label>
+                <input type="number" name="steps" id="StepsValue" value="1" >
+                <br>
+                <button type="button" id="submitB" onclick="validateOptions();">submit</button>
+            </form>
 
-            <label for="WidthValue">Width =</label>
-            <input type="number" name="width" id="WidthValue" value="100">
 
-            <label for="HeightValue">Height =</label>
-            <input type="number" name="height" id="HeightValue" value="100">
-
-            <label for="ProbabilityValue">Probability =</label>
-            <input type="number" name="probability" id="ProbabilityValue" value="0.01" step="0.01">
-
-            <button type="button" onclick="validateOptions();">submit</button>
-        </form>
-
-
+        </div>
     </div>
-
 
 </body>
 

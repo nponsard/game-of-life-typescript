@@ -3,7 +3,7 @@
 let canvas = <HTMLCanvasElement>document.getElementById('canvas')
 let ctx = <CanvasRenderingContext2D>canvas.getContext("2d")
 let WIDTH = 92
-let HEIGHT = 49
+let HEIGHT = 47
 
 let p = 0.8
 
@@ -16,6 +16,7 @@ let ScaleValue = <HTMLInputElement>document.getElementById("ScaleValue")
 let WidthValue = <HTMLInputElement>document.getElementById("WidthValue")
 let HeightValue = <HTMLInputElement>document.getElementById("HeightValue")
 let ProbabilityValue = <HTMLInputElement>document.getElementById("ProbabilityValue")
+let StepsValue = <HTMLInputElement>document.getElementById("StepsValue")
 
 canvas.width = WIDTH * scale
 canvas.height = HEIGHT * scale
@@ -57,7 +58,7 @@ class grid {
     show(ctx: CanvasRenderingContext2D) {
 
         for (let x = 0; x <= this.w; x++) {
-            for (let y = 0; y < this.h; y++) {
+            for (let y = 0; y <= this.h; y++) {
                 ctx.beginPath();
                 ctx.rect(x * scale, y * scale, scale, scale);
                 ctx.fillStyle = "white"
@@ -214,6 +215,8 @@ addEventListener("keypress", function (e) {
 
         ProbabilityValue.value = p.toString()
 
+        StepsValue.value = steps.toString()
+
 
     }
 
@@ -232,6 +235,9 @@ function validateOptions() {
     HEIGHT = parseInt(HeightValue.value)
 
     p = parseFloat(ProbabilityValue.value)
+
+    steps = parseInt(StepsValue.value)
+
     canvas.width = WIDTH * scale
     canvas.height = HEIGHT * scale
 
@@ -262,7 +268,7 @@ function draw() {
     if (show) cells.show(ctx)
     requestAnimationFrame(draw)
     f += 1
-    if (f >= 10) {
+    if (f >= steps) {
         f = 0
         if (play) cells.update()
     }
