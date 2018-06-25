@@ -11,6 +11,9 @@ let scale = 20
 let steps = 1
 let play = false
 let show = true
+let tracing = false
+let mX = 0
+let mY = 0
 
 let ScaleValue = <HTMLInputElement>document.getElementById("ScaleValue")
 let WidthValue = <HTMLInputElement>document.getElementById("WidthValue")
@@ -140,17 +143,57 @@ class grid {
 let cells = new grid(WIDTH, HEIGHT)
 
 //keys listeners
-canvas.addEventListener("click", function (e) {
+addEventListener("mousedown", function (e) {
+    tracing = true
     let x = Math.floor(e.layerX / scale)
     let y = Math.floor(e.layerY / scale) - 1
-
     if (cells.grid[x][y]) {
 
         cells.grid[x][y] = false
     } else {
         cells.grid[x][y] = true
     }
-    cells.show(ctx)
+
+})
+// canvas.addEventListener("click", function (e) {
+//     let x = Math.floor(e.layerX / scale)
+//     let y = Math.floor(e.layerY / scale) - 1
+//     if (cells.grid[x][y]) {
+
+//         cells.grid[x][y] = false
+//     } else {
+//         cells.grid[x][y] = true
+//     }
+
+// })
+addEventListener("mouseup", function (e) {
+    tracing = false
+    // let x = Math.floor(e.layerX / scale)
+    // let y = Math.floor(e.layerY / scale) - 1
+    // if (cells.grid[x][y]) {
+
+    //     cells.grid[x][y] = false
+    // } else {
+    //     cells.grid[x][y] = true
+    // }
+})
+
+canvas.addEventListener("mousemove", function (e) {
+    let x = Math.floor(e.layerX / scale)
+    let y = Math.floor(e.layerY / scale) - 1
+    if (x !== mX || y !== mY) {
+        if (tracing) {
+            if (cells.grid[x][y]) {
+
+                cells.grid[x][y] = false
+            } else {
+                cells.grid[x][y] = true
+            }
+        }
+        mX = x
+        mY = y
+    }
+
 
 })
 addEventListener("keypress", function (e) {
