@@ -1,9 +1,9 @@
-# Upcoming release
+# 1.2.0
 
 ## Grid editing
 You can now keep clicking for making lines 
-
-
+## Core
+Fixed grid has dimensions higher than the parameters
 
 
 # 1.1.0
