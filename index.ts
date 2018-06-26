@@ -35,7 +35,7 @@ class grid {
         let i: boolean = true
         this.w = w
         this.h = h
-        for (let x = 0; x <= w; x++) {
+        for (let x = 0; x < w; x++) {
             for (let y = 0; y < h; y++) {
                 line.push(false)
 
@@ -60,8 +60,8 @@ class grid {
 
     show(ctx: CanvasRenderingContext2D) {
 
-        for (let x = 0; x <= this.w; x++) {
-            for (let y = 0; y <= this.h; y++) {
+        for (let x = 0; x < this.w; x++) {
+            for (let y = 0; y < this.h; y++) {
                 ctx.beginPath();
                 ctx.rect(x * scale, y * scale, scale, scale);
                 ctx.fillStyle = "white"
@@ -79,9 +79,9 @@ class grid {
         let temp = []
         let t = false
         let line: Array<boolean> = []
-        for (let x = 0; x <= this.w; x++) {
+        for (let x = 0; x < this.w; x++) {
 
-            for (let y = 0; y <= this.h; y++) {
+            for (let y = 0; y < this.h; y++) {
 
                 let n = this.neighbours(x, y)
 
@@ -112,7 +112,7 @@ class grid {
         let sum = 0
         if (x !== 0) {
             if (this.grid[x - 1][y]) sum += 1
-            if (y !== this.h) {
+            if (y !== this.h - 1) {
                 if (this.grid[x - 1][y + 1]) sum += 1
             }
         }
@@ -121,16 +121,16 @@ class grid {
             if (x !== 0) {
                 if (this.grid[x - 1][y - 1]) sum += 1
             }
-            if (x !== this.w) {
+            if (x !== this.w - 1) {
                 if (this.grid[x + 1][y - 1]) sum += 1
             }
         }
-        if (x !== this.w) {
+        if (x !== this.w - 1) {
             if (this.grid[x + 1][y]) sum += 1
         }
-        if (y !== this.h) {
+        if (y !== this.h - 1) {
             if (this.grid[x][y + 1]) sum += 1
-            if (x !== this.w) {
+            if (x !== this.w - 1) {
                 if (this.grid[x + 1][y + 1]) sum += 1
             }
         }
@@ -214,7 +214,7 @@ addEventListener("keypress", function (e) {
         let h = cells.h
         let w = cells.w
 
-        for (let x = 0; x <= w; x++) {
+        for (let x = 0; x <w; x++) {
             for (let y = 0; y < h; y++) {
                 i = false
                 if (Math.random() >= p) i = true
@@ -233,7 +233,7 @@ addEventListener("keypress", function (e) {
         let i: boolean = true
         let w = cells.w
         let h = cells.h
-        for (let x = 0; x <= w; x++) {
+        for (let x = 0; x < w; x++) {
             for (let y = 0; y < h; y++) {
                 line.push(false)
 
@@ -293,7 +293,7 @@ function validateOptions() {
     let i: boolean = true
     let w = cells.w
     let h = cells.h
-    for (let x = 0; x <= w; x++) {
+    for (let x = 0; x < w; x++) {
         for (let y = 0; y < h; y++) {
             line.push(false)
 
