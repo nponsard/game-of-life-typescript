@@ -1,3 +1,11 @@
+# Upcoming release
+
+## Grid editing
+You can now keep clicking for making lines 
+
+
+
+
 # 1.1.0
 
 ## controls
