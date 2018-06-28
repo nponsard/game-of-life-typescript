@@ -42,14 +42,13 @@
 </head>
 
 <body>
-    <p>P/space : play/pause | Click : toggle cell | R : randomize grid | C : clear grid | O : options</p>
     <canvas id="canvas" width="800" height="600"></canvas>
-
+    
     <!-- options -->
     <div id="options" style="display: none;">
         <div style="background: whitesmoke; border: 2px solid black;width: 300px;margin: 5px;">
             <h3>Options</h3>
-
+            
             <form onsubmit="return validateOptions();">
                 <label for="ScaleValue">Scale</label>
                 <input type="number" name="scale" id="ScaleValue" value="20">
@@ -69,9 +68,10 @@
                 <button type="button" id="submitB" onclick="validateOptions();">submit</button>
             </form>
 
-
+            
         </div>
     </div>
+    <p>P/space : play/pause | Click : toggle cell | R : randomize grid | C : clear grid | O : options</p>
 
 </body>
 

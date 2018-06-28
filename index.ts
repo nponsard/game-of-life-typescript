@@ -143,10 +143,10 @@ class grid {
 let cells = new grid(WIDTH, HEIGHT)
 
 //keys listeners
-addEventListener("mousedown", function (e) {
+canvas.addEventListener("mousedown", function (e) {
     tracing = true
     let x = Math.floor(e.layerX / scale)
-    let y = Math.floor(e.layerY / scale) - 1
+    let y = Math.floor(e.layerY / scale) 
     if (cells.grid[x][y]) {
 
         cells.grid[x][y] = false
@@ -180,7 +180,7 @@ addEventListener("mouseup", function (e) {
 
 canvas.addEventListener("mousemove", function (e) {
     let x = Math.floor(e.layerX / scale)
-    let y = Math.floor(e.layerY / scale) - 1
+    let y = Math.floor(e.layerY / scale) 
     if (x !== mX || y !== mY) {
         if (tracing) {
             if (cells.grid[x][y]) {
