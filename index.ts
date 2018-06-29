@@ -268,15 +268,15 @@ function validateOptions() {
     let optionsDiv = <HTMLElement>document.getElementById("options")
     optionsDiv.style.display = "none"
 
-    scale = parseInt(ScaleValue.value)
+    scale = parseInt(ScaleValue.value,10)
 
-    WIDTH = parseInt(WidthValue.value)
+    WIDTH = parseInt(WidthValue.value,10)
 
-    HEIGHT = parseInt(HeightValue.value)
+    HEIGHT = parseInt(HeightValue.value,10)
 
     p = parseFloat(ProbabilityValue.value)
 
-    steps = parseInt(StepsValue.value)
+    steps = parseInt(StepsValue.value,10)
 
     canvas.width = WIDTH * scale
     canvas.height = HEIGHT * scale
