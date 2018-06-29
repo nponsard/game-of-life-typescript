@@ -2,8 +2,8 @@
 
 let canvas = <HTMLCanvasElement>document.getElementById('canvas')
 let ctx = <CanvasRenderingContext2D>canvas.getContext("2d")
-let WIDTH = 92
-let HEIGHT = 47
+let WIDTH = 80
+let HEIGHT = 40
 
 let p = 0.8
 let Dmethod = 1

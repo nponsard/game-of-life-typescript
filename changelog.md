@@ -2,7 +2,9 @@
 
 ## Renderer
 Optimized drawing instructions (with the default grid the rendering is now more than 3 times faster)
-
+## Main page
+Fixed editing problems by changing organisation of the page\
+Changed default size
 
 
 # 1.2.0
