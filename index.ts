@@ -6,7 +6,7 @@ let WIDTH = 92
 let HEIGHT = 47
 
 let p = 0.8
-
+let Dmethod = 1
 let scale = 20
 let steps = 1
 let play = false
@@ -60,16 +60,13 @@ class grid {
 
     show(ctx: CanvasRenderingContext2D) {
 
+        ctx.strokeStyle = "grey"
         for (let x = 0; x < this.w; x++) {
             for (let y = 0; y < this.h; y++) {
-                ctx.beginPath();
-                ctx.rect(x * scale, y * scale, scale, scale);
                 ctx.fillStyle = "white"
                 if (this.grid[x][y]) ctx.fillStyle = "black";
-                ctx.fill();
-                ctx.strokeStyle = "grey"
-                ctx.stroke()
-                ctx.closePath();
+                ctx.fillRect(x * scale, y * scale, scale, scale);
+                ctx.strokeRect(x * scale, y * scale, scale, scale);
             }
         }
     }
