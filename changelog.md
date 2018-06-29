@@ -1,4 +1,4 @@
-# Upcoming release
+# 1.2.1
 
 ## Renderer
 Optimized drawing instructions (with the default grid the rendering is now more than 3 times faster)
