@@ -1,6 +1,264 @@
-var f=document.getElementById("canvas"),h=f.getContext("2d"),k=!1,l=!1,m=0,n=0,p=document.getElementById("ScaleValue"),q=document.getElementById("WidthValue"),t=document.getElementById("HeightValue"),u=document.getElementById("ProbabilityValue"),v=document.getElementById("StepsValue");f.width=1600;f.height=800;function w(){this.a=[[]];var b=[];this.b=80;this.c=40;for(var a=0;80>a;a++){for(var e=0;40>e;e++)b.push(!1);this.a.push(b);b=[]}}
-w.prototype.show=function(b){b.strokeStyle="grey";for(var a=0;a<this.b;a++)for(var e=0;e<this.c;e++)b.fillStyle="white",this.a[a][e]&&(b.fillStyle="black"),b.fillRect(20*a,20*e,20,20),b.strokeRect(20*a,20*e,20,20)};
-w.prototype.update=function(){for(var b=[],a,e=[],c=0;c<this.b;c++){for(var d=0;d<this.c;d++){a=0;0!==c&&(this.a[c-1][d]&&(a+=1),d!==this.c-1&&this.a[c-1][d+1]&&(a+=1));0!==d&&(this.a[c][d-1]&&(a+=1),0!==c&&this.a[c-1][d-1]&&(a+=1),c!==this.b-1&&this.a[c+1][d-1]&&(a+=1));c!==this.b-1&&this.a[c+1][d]&&(a+=1);d!==this.c-1&&(this.a[c][d+1]&&(a+=1),c!==this.b-1&&this.a[c+1][d+1]&&(a+=1));var g=a;this.a[c][d]?(a=!0,2===g&&(a=!0),3===g&&(a=!0),3<g&&(a=!1),2>g&&(a=!1)):(a=!1,3===g&&(a=!0));e.push(a)}b.push(e);
-e=[]}this.a=b};var x=new w;f.addEventListener("mousedown",function(b){l=!0;var a=Math.floor(b.layerX/20);b=Math.floor(b.layerY/20);x.a[a][b]=x.a[a][b]?!1:!0});addEventListener("mouseup",function(){l=!1});f.addEventListener("mousemove",function(b){var a=Math.floor(b.layerX/20);b=Math.floor(b.layerY/20);if(a!==m||b!==n)l&&(x.a[a][b]=x.a[a][b]?!1:!0),m=a,n=b});
-addEventListener("keypress",function(b){if(" "===b.key||"p"===b.key)k=k?!1:!0;if("r"===b.key){x.a=[];for(var a,e=[],c=x.c,d=x.b,g=0;g<d;g++){for(var r=0;r<c;r++)a=!1,.8<=Math.random()&&(a=!0),e.push(a);x.a.push(e);e=[]}}if("c"===b.key)for(x.a=[[]],a=[],e=x.b,c=x.c,d=0;d<e;d++){for(g=0;g<c;g++)a.push(!1);x.a.push(a);a=[]}"o"===b.key&&(f.style.display="none",document.getElementById("options").style.display="block",k=!1,p.value=(20).toString(),q.value=(80).toString(),t.value=(40).toString(),u.value=
-(.8).toString(),v.value=(1).toString())});var y=0;function z(){x.show(h);requestAnimationFrame(z);y+=1;1<=y&&(y=0,k&&x.update())}z();
+"use strict";
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext("2d");
+let WIDTH = 80;
+let HEIGHT = 40;
+let p = 0.8;
+let Dmethod = 1;
+let scale = 20;
+let steps = 1;
+let play = false;
+let show = true;
+let tracing = false;
+let mX = 0;
+let mY = 0;
+let ScaleValue = document.getElementById("ScaleValue");
+let WidthValue = document.getElementById("WidthValue");
+let HeightValue = document.getElementById("HeightValue");
+let ProbabilityValue = document.getElementById("ProbabilityValue");
+let StepsValue = document.getElementById("StepsValue");
+canvas.width = WIDTH * scale;
+canvas.height = HEIGHT * scale;
+class grid {
+    constructor(w, h) {
+        this.grid = [[]];
+        let line = [];
+        let i = true;
+        this.w = w;
+        this.h = h;
+        for (let x = 0; x < w; x++) {
+            for (let y = 0; y < h; y++) {
+                line.push(false);
+            }
+            this.grid.push(line);
+            line = [];
+        }
+        // for (let x = 0; x <= w; x++) {
+        //     for (let y = 0; y < h; y++) {
+        //         i = false
+        //         if (Math.random() >= p) i = true
+        //         line.push(i)
+        //     }
+        //     this.grid.push(line)
+        //     line = []
+        // }
+    }
+    show(ctx) {
+        ctx.strokeStyle = "grey";
+        for (let x = 0; x < this.w; x++) {
+            for (let y = 0; y < this.h; y++) {
+                ctx.fillStyle = "white";
+                if (this.grid[x][y])
+                    ctx.fillStyle = "black";
+                ctx.fillRect(x * scale, y * scale, scale, scale);
+                ctx.strokeRect(x * scale, y * scale, scale, scale);
+            }
+        }
+    }
+    update() {
+        let temp = [];
+        let t = false;
+        let line = [];
+        for (let x = 0; x < this.w; x++) {
+            for (let y = 0; y < this.h; y++) {
+                let n = this.neighbours(x, y);
+                if (this.grid[x][y]) {
+                    t = true;
+                    if (n === 2)
+                        t = true;
+                    if (n === 3)
+                        t = true;
+                    if (n > 3)
+                        t = false;
+                    if (n < 2)
+                        t = false;
+                }
+                else {
+                    t = false;
+                    if (n === 3)
+                        t = true;
+                }
+                line.push(t);
+            }
+            temp.push(line);
+            line = [];
+        }
+        this.grid = temp;
+    }
+    neighbours(x, y) {
+        let sum = 0;
+        if (x !== 0) {
+            if (this.grid[x - 1][y])
+                sum += 1;
+            if (y !== this.h - 1) {
+                if (this.grid[x - 1][y + 1])
+                    sum += 1;
+            }
+        }
+        if (y !== 0) {
+            if (this.grid[x][y - 1])
+                sum += 1;
+            if (x !== 0) {
+                if (this.grid[x - 1][y - 1])
+                    sum += 1;
+            }
+            if (x !== this.w - 1) {
+                if (this.grid[x + 1][y - 1])
+                    sum += 1;
+            }
+        }
+        if (x !== this.w - 1) {
+            if (this.grid[x + 1][y])
+                sum += 1;
+        }
+        if (y !== this.h - 1) {
+            if (this.grid[x][y + 1])
+                sum += 1;
+            if (x !== this.w - 1) {
+                if (this.grid[x + 1][y + 1])
+                    sum += 1;
+            }
+        }
+        return sum;
+    }
+}
+let cells = new grid(WIDTH, HEIGHT);
+//keys listeners
+canvas.addEventListener("mousedown", function (e) {
+    tracing = true;
+    let x = Math.floor(e.layerX / scale);
+    let y = Math.floor(e.layerY / scale);
+    if (cells.grid[x][y]) {
+        cells.grid[x][y] = false;
+    }
+    else {
+        cells.grid[x][y] = true;
+    }
+});
+// canvas.addEventListener("click", function (e) {
+//     let x = Math.floor(e.layerX / scale)
+//     let y = Math.floor(e.layerY / scale) - 1
+//     if (cells.grid[x][y]) {
+//         cells.grid[x][y] = false
+//     } else {
+//         cells.grid[x][y] = true
+//     }
+// })
+addEventListener("mouseup", function (e) {
+    tracing = false;
+    // let x = Math.floor(e.layerX / scale)
+    // let y = Math.floor(e.layerY / scale) - 1
+    // if (cells.grid[x][y]) {
+    //     cells.grid[x][y] = false
+    // } else {
+    //     cells.grid[x][y] = true
+    // }
+});
+canvas.addEventListener("mousemove", function (e) {
+    let x = Math.floor(e.layerX / scale);
+    let y = Math.floor(e.layerY / scale);
+    if (x !== mX || y !== mY) {
+        if (tracing) {
+            if (cells.grid[x][y]) {
+                cells.grid[x][y] = false;
+            }
+            else {
+                cells.grid[x][y] = true;
+            }
+        }
+        mX = x;
+        mY = y;
+    }
+});
+addEventListener("keypress", function (e) {
+    if (e.key === " " || e.key === "p") {
+        if (play) {
+            play = false;
+        }
+        else {
+            play = true;
+        }
+    }
+    if (e.key === "r") {
+        cells.grid = [];
+        let i = false;
+        let line = [];
+        let h = cells.h;
+        let w = cells.w;
+        for (let x = 0; x < w; x++) {
+            for (let y = 0; y < h; y++) {
+                i = false;
+                if (Math.random() >= p)
+                    i = true;
+                line.push(i);
+            }
+            cells.grid.push(line);
+            line = [];
+        }
+    }
+    if (e.key === "c") {
+        cells.grid = [[]];
+        let line = [];
+        let i = true;
+        let w = cells.w;
+        let h = cells.h;
+        for (let x = 0; x < w; x++) {
+            for (let y = 0; y < h; y++) {
+                line.push(false);
+            }
+            cells.grid.push(line);
+            line = [];
+        }
+    }
+    if (e.key === "o") {
+        canvas.style.display = "none";
+        let optionsDiv = document.getElementById("options");
+        optionsDiv.style.display = "block";
+        play = false;
+        ScaleValue.value = scale.toString();
+        WidthValue.value = WIDTH.toString();
+        HeightValue.value = HEIGHT.toString();
+        ProbabilityValue.value = p.toString();
+        StepsValue.value = steps.toString();
+    }
+});
+function validateOptions() {
+    canvas.style.display = "block";
+    let optionsDiv = document.getElementById("options");
+    optionsDiv.style.display = "none";
+    scale = parseInt(ScaleValue.value, 10);
+    WIDTH = parseInt(WidthValue.value, 10);
+    HEIGHT = parseInt(HeightValue.value, 10);
+    p = parseFloat(ProbabilityValue.value);
+    steps = parseInt(StepsValue.value, 10);
+    canvas.width = WIDTH * scale;
+    canvas.height = HEIGHT * scale;
+    cells.w = WIDTH;
+    cells.h = HEIGHT;
+    // clear the grid to the right format
+    cells.grid = [[]];
+    let line = [];
+    let i = true;
+    let w = cells.w;
+    let h = cells.h;
+    for (let x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+            line.push(false);
+        }
+        cells.grid.push(line);
+        line = [];
+    }
+}
+let f = 0;
+function draw() {
+    if (show)
+        cells.show(ctx);
+    requestAnimationFrame(draw);
+    f += 1;
+    if (f >= steps) {
+        f = 0;
+        if (play)
+            cells.update();
+    }
+}
+draw();
