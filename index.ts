@@ -2,12 +2,15 @@
 
 let canvas = <HTMLCanvasElement>document.getElementById('canvas')
 let ctx = <CanvasRenderingContext2D>canvas.getContext("2d")
-let WIDTH = 80
-let HEIGHT = 40
+let WIDTH = 160
+let HEIGHT = 80
+
+
+let showLines = false
 
 let p = 0.8
 let Dmethod = 1
-let scale = 20
+let scale = 10
 let steps = 1
 let play = false
 let show = true
@@ -24,20 +27,64 @@ let StepsValue = <HTMLInputElement>document.getElementById("StepsValue")
 canvas.width = WIDTH * scale
 canvas.height = HEIGHT * scale
 
+class Color {
+    r: number
+    g: number
+    b: number
+    constructor(r = 0, g = 0, b = 0) {
+        this.r = r
+        this.g = g
+        this.b = b
+    }
+    toHex(): string {
+        return `rgb(${Math.floor(this.r)},${Math.floor(this.g)},${Math.floor(this.b)})`
+    }
+}
+
+const WHITE = new Color(255, 255, 255)
+const BLACK = new Color()
+
+class Cell {
+    color: Color
+    alive: boolean
+    constructor(alive: boolean, color: Color = WHITE) {
+        this.alive = alive
+        this.color = color
+    }
+    getColor(): string {
+        if (!this.alive) {
+            this.color = WHITE
+        }
+        // else this.color = BLACK
+
+        return this.color.toHex()
+    }
+}
+function randomColor() {
+    let r = Math.floor(Math.random() * 250)
+    let g = Math.floor(Math.random() * 250)
+    let b = Math.floor(Math.random() * 250)
+    return new Color(r, g, b)
+
+}
+
+
+
+
 class grid {
 
-    grid: Array<Array<boolean>>
+    grid: Array<Array<Cell>>
     w: number
     h: number
     constructor(w: number, h: number) {
-        this.grid = [[]]
-        let line: Array<boolean> = []
-        let i: boolean = true
+        this.grid = []
+        let line: Array<Cell> = []
+        let alive: boolean = false
         this.w = w
         this.h = h
         for (let x = 0; x < w; x++) {
             for (let y = 0; y < h; y++) {
-                line.push(false)
+                line.push(new Cell(alive, randomColor()))
 
             }
             this.grid.push(line)
@@ -63,10 +110,13 @@ class grid {
         ctx.strokeStyle = "grey"
         for (let x = 0; x < this.w; x++) {
             for (let y = 0; y < this.h; y++) {
-                ctx.fillStyle = "white"
-                if (this.grid[x][y]) ctx.fillStyle = "black";
+                // console.log(this.grid[x][y])
+                ctx.fillStyle = this.grid[x][y].getColor()
                 ctx.fillRect(x * scale, y * scale, scale, scale);
-                ctx.strokeRect(x * scale, y * scale, scale, scale);
+                if (showLines) {
+
+                    ctx.strokeRect(x * scale, y * scale, scale, scale);
+                }
             }
         }
     }
@@ -74,28 +124,37 @@ class grid {
 
     update() {
         let temp = []
-        let t = false
-        let line: Array<boolean> = []
+        let alive = false
+        let line: Array<Cell> = []
         for (let x = 0; x < this.w; x++) {
 
             for (let y = 0; y < this.h; y++) {
+                let color = this.grid[x][y].color
 
-                let n = this.neighbours(x, y)
+                let out = this.neighbours(x, y)
+                let n = out.sum
 
-                if (this.grid[x][y]) {
+                if (this.grid[x][y].alive) {
 
-                    t = true
+                    alive = true
 
-                    if (n === 2) t = true
-                    if (n === 3) t = true
-                    if (n > 3) t = false
-                    if (n < 2) t = false
+                    if (n === 2) alive = true
+                    if (n === 3) alive = true
+                    if (n > 3) alive = false
+                    if (n < 2) alive = false
 
                 } else {
-                    t = false
-                    if (n === 3) t = true
+                    alive = false
+                    if (n === 3) {
+                        alive = true
+                        color = out.average_color
+                        color.r += Math.round(Math.random() * 6 - 3)
+                        color.g += Math.round(Math.random() * 6 - 3)
+                        color.b += Math.round(Math.random() * 6 - 3)
+
+                    }
                 }
-                line.push(t)
+                line.push(new Cell(alive, color))
 
 
             }
@@ -105,33 +164,80 @@ class grid {
         this.grid = temp
     }
 
-    neighbours(x: number, y: number): number {
+
+    neighbours(x: number, y: number) {
+        let average_color = new Color()
         let sum = 0
         if (x !== 0) {
-            if (this.grid[x - 1][y]) sum += 1
+            if (this.grid[x - 1][y].alive) {
+                sum += 1
+                average_color.r += this.grid[x - 1][y].color.r
+                average_color.g += this.grid[x - 1][y].color.g
+                average_color.b += this.grid[x - 1][y].color.b
+            }
             if (y !== this.h - 1) {
-                if (this.grid[x - 1][y + 1]) sum += 1
+                if (this.grid[x - 1][y + 1].alive) {
+                    sum += 1
+                    average_color.r += this.grid[x - 1][y + 1].color.r
+                    average_color.g += this.grid[x - 1][y + 1].color.g
+                    average_color.b += this.grid[x - 1][y + 1].color.b
+                }
             }
         }
         if (y !== 0) {
-            if (this.grid[x][y - 1]) sum += 1
+            if (this.grid[x][y - 1].alive) {
+                sum += 1
+                average_color.r += this.grid[x][y - 1].color.r
+                average_color.g += this.grid[x][y - 1].color.g
+                average_color.b += this.grid[x][y - 1].color.b
+            }
             if (x !== 0) {
-                if (this.grid[x - 1][y - 1]) sum += 1
+                if (this.grid[x - 1][y - 1].alive) {
+                    sum += 1
+                    average_color.r += this.grid[x - 1][y - 1].color.r
+                    average_color.g += this.grid[x - 1][y - 1].color.g
+                    average_color.b += this.grid[x - 1][y - 1].color.b
+                }
             }
             if (x !== this.w - 1) {
-                if (this.grid[x + 1][y - 1]) sum += 1
+                if (this.grid[x + 1][y - 1].alive) {
+                    sum += 1
+                    average_color.r += this.grid[x + 1][y - 1].color.r
+                    average_color.g += this.grid[x + 1][y - 1].color.g
+                    average_color.b += this.grid[x + 1][y - 1].color.b
+                }
             }
         }
         if (x !== this.w - 1) {
-            if (this.grid[x + 1][y]) sum += 1
-        }
-        if (y !== this.h - 1) {
-            if (this.grid[x][y + 1]) sum += 1
-            if (x !== this.w - 1) {
-                if (this.grid[x + 1][y + 1]) sum += 1
+            if (this.grid[x + 1][y].alive) {
+                sum += 1
+                average_color.r += this.grid[x + 1][y].color.r
+                average_color.g += this.grid[x + 1][y].color.g
+                average_color.b += this.grid[x + 1][y].color.b
             }
         }
-        return sum
+        if (y !== this.h - 1) {
+            if (this.grid[x][y + 1].alive) {
+                sum += 1
+                average_color.r += this.grid[x][y + 1].color.r
+                average_color.g += this.grid[x][y + 1].color.g
+                average_color.b += this.grid[x][y + 1].color.b
+            }
+            if (x !== this.w - 1) {
+                if (this.grid[x + 1][y + 1].alive) {
+                    sum += 1
+                    average_color.r += this.grid[x + 1][y + 1].color.r
+                    average_color.g += this.grid[x + 1][y + 1].color.g
+                    average_color.b += this.grid[x + 1][y + 1].color.b
+                }
+            }
+        }
+        average_color.r = average_color.r / sum
+        average_color.g = average_color.g / sum
+        average_color.b = average_color.b / sum
+
+        return { sum: sum, average_color: average_color }
+
     }
 
 
@@ -142,13 +248,14 @@ let cells = new grid(WIDTH, HEIGHT)
 //keys listeners
 canvas.addEventListener("mousedown", function (e) {
     tracing = true
-    let x = Math.floor(e.layerX / scale)
-    let y = Math.floor(e.layerY / scale) 
-    if (cells.grid[x][y]) {
+    let x = Math.floor(e.offsetX / scale)
+    let y = Math.floor(e.offsetY / scale)
+    if (cells.grid[x][y].alive) {
 
-        cells.grid[x][y] = false
+        cells.grid[x][y].alive = false
     } else {
-        cells.grid[x][y] = true
+        cells.grid[x][y].alive = true
+        cells.grid[x][y].color = randomColor()
     }
 
 })
@@ -176,15 +283,16 @@ addEventListener("mouseup", function (e) {
 })
 
 canvas.addEventListener("mousemove", function (e) {
-    let x = Math.floor(e.layerX / scale)
-    let y = Math.floor(e.layerY / scale) 
+    let x = Math.floor(e.offsetX / scale)
+    let y = Math.floor(e.offsetY / scale)
     if (x !== mX || y !== mY) {
         if (tracing) {
-            if (cells.grid[x][y]) {
+            if (cells.grid[x][y].alive) {
 
-                cells.grid[x][y] = false
+                cells.grid[x][y].alive = false
             } else {
-                cells.grid[x][y] = true
+                cells.grid[x][y].alive = true
+                cells.grid[x][y].color = randomColor()
             }
         }
         mX = x
@@ -211,12 +319,13 @@ addEventListener("keypress", function (e) {
         let h = cells.h
         let w = cells.w
 
-        for (let x = 0; x <w; x++) {
+        for (let x = 0; x < w; x++) {
             for (let y = 0; y < h; y++) {
                 i = false
                 if (Math.random() >= p) i = true
+                let c = new Cell(i, randomColor())
 
-                line.push(i)
+                line.push(c)
             }
             cells.grid.push(line)
             line = []
@@ -226,13 +335,12 @@ addEventListener("keypress", function (e) {
     if (e.key === "c") {
 
         cells.grid = [[]]
-        let line: Array<boolean> = []
-        let i: boolean = true
+        let line: Array<Cell> = []
         let w = cells.w
         let h = cells.h
         for (let x = 0; x < w; x++) {
             for (let y = 0; y < h; y++) {
-                line.push(false)
+                line.push(new Cell(false))
 
             }
             cells.grid.push(line)
@@ -268,15 +376,15 @@ function validateOptions() {
     let optionsDiv = <HTMLElement>document.getElementById("options")
     optionsDiv.style.display = "none"
 
-    scale = parseInt(ScaleValue.value,10)
+    scale = parseInt(ScaleValue.value, 10)
 
-    WIDTH = parseInt(WidthValue.value,10)
+    WIDTH = parseInt(WidthValue.value, 10)
 
-    HEIGHT = parseInt(HeightValue.value,10)
+    HEIGHT = parseInt(HeightValue.value, 10)
 
     p = parseFloat(ProbabilityValue.value)
 
-    steps = parseInt(StepsValue.value,10)
+    steps = parseInt(StepsValue.value, 10)
 
     canvas.width = WIDTH * scale
     canvas.height = HEIGHT * scale
@@ -286,13 +394,13 @@ function validateOptions() {
 
     // clear the grid to the right format
     cells.grid = [[]]
-    let line: Array<boolean> = []
-    let i: boolean = true
+    let line: Array<Cell> = []
+    // let i: boolean = true
     let w = cells.w
     let h = cells.h
     for (let x = 0; x < w; x++) {
         for (let y = 0; y < h; y++) {
-            line.push(false)
+            line.push(new Cell(false))
 
         }
         cells.grid.push(line)
